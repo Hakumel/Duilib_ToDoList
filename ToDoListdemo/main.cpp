@@ -5,7 +5,7 @@
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
 	CPaintManagerUI::SetInstance(hInstance);
-	CPaintManagerUI::SetResourcePath(CPaintManagerUI::GetInstancePath() + _T("Skin\\ToDoListRes"));   // 设置资源的默认路径（此处设置为和exe在同一目录）
+	CPaintManagerUI::SetResourcePath(CPaintManagerUI::GetInstancePath() + _T("Skin\\ToDoListRes"));  
 	ToDoListMainForm Frame;
 	Frame.Create(NULL, _T("ToDoListDemo"), UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
 	Frame.CenterWindow();

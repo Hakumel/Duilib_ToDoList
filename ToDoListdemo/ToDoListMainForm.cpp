@@ -130,7 +130,7 @@ void ToDoListMainForm::Notify(TNotifyUI & msg)
 	else if (msg.sType == _T("itemactivate"))
 	{
 		//双击响应删除(bug)
-		/*CListUI* pList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("todolist")));
+		CListUI* pList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("todolist")));
 		string Message = "已完成任务:";
 		if (pList->GetItemIndex(msg.pSender) != -1)
 		{
@@ -144,8 +144,8 @@ void ToDoListMainForm::Notify(TNotifyUI & msg)
 				pList->Remove(element);
 				pList->SetTextCallback(this);
 			}
-		}*/
-
+		}
+/*
 		string Message = "任务信息:";
 		CListUI* pList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("todolist")));
 		if (pList->GetItemIndex(msg.pSender) != -1)
@@ -157,7 +157,8 @@ void ToDoListMainForm::Notify(TNotifyUI & msg)
 				unsigned tag = element->GetTag();
 				Message+=m_mapdata[tag];
 			}
-		}
+		}*/
+		
 		::MessageBox(NULL, Message.c_str(), _T("提示"), MB_OK);
 	}
 }

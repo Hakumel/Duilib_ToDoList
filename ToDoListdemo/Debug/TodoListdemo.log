@@ -1,7 +1,4 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(411,5): warning MSB8028: 中间目录(Debug\)包含从另一个项目(Win32Project1.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。
-  main.cpp
-C:\Users\Administrator\Desktop\duilib文档\Diulib项\fengxiangwan-Duilib-demo-master\Duilib-demo\DuiLib\Core\UIManager.h(45): warning C4091: “typedef ”: 没有声明变量时忽略“DuiLib::EVENTTYPE_UI”的左侧
   ToDoListMainForm.cpp
 C:\Users\Administrator\Desktop\duilib文档\Diulib项\fengxiangwan-Duilib-demo-master\Duilib-demo\DuiLib\Core\UIManager.h(45): warning C4091: “typedef ”: 没有声明变量时忽略“DuiLib::EVENTTYPE_UI”的左侧
-  正在生成代码...
   TodoListdemo.vcxproj -> C:\Users\Administrator\Desktop\duilib文档\Diulib项\Duilib-demo\Debug\ToDoList demo.exe
