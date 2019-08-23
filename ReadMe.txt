@@ -1,5 +1,4 @@
-
-本程序基于duilib demo的案例实现任务清单（To Do List）。
+参看duilib demo的案例实现任务清单（To Do List）。
 
 功能：
 编辑并创建任务。
