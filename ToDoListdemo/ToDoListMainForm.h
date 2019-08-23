@@ -1,6 +1,6 @@
 #pragma once
 #include "DuilibAfx.h"
-#include <vector>
+#include <map>
 #include <string>
 
 struct Prama
@@ -15,16 +15,15 @@ class ToDoListMainForm : public CWindowWnd, public INotifyUI, public IListCallba
 {
 public:
 	ToDoListMainForm();
-	LPCTSTR GetWindowClassName() const override;
-	UINT GetClassStyle() const override;
 	void OnFinalMessage(HWND  )override;
 	void Init();
-	void OnPrepare(TNotifyUI& msg);
-	static DWORD WINAPI Create_item(LPVOID lpParameter);
-	void OnCreateitem();
-	LPCTSTR GetItemText(CControlUI* pControl, int iIndex, int iSubItem);
 	void Notify(TNotifyUI& msg);
-	
+	void OnCreateitem();
+	void OnPrepare(TNotifyUI& msg);
+	UINT GetClassStyle() const override;
+
+	LPCTSTR GetWindowClassName() const override;
+	LPCTSTR GetItemText(CControlUI* pControl, int iIndex, int iSubItem);
 	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnAddListItem(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -37,6 +36,8 @@ public:
 	LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+	
+	static DWORD WINAPI Create_item(LPVOID lpParameter);
 
 private:
 	CPaintManagerUI m_PaintManager;
@@ -44,6 +45,7 @@ private:
 	CButtonUI* m_pCloseBtn;
 	CButtonUI* m_pCreateBtn;
 	CEditUI* m_pEdit;
-	static std::vector<std::string> m_vecdata;//存放事务文本
+	static unsigned index;
+	static std::map<unsigned,std::string> m_mapdata;
 };
 

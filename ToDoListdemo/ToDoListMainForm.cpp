@@ -1,14 +1,15 @@
 #include "TodoListMainForm.h"
 #include <memory>
 #include <algorithm>
+
 const int WM_ADDLISTITEM = WM_USER + 66;
 
-//ToDoListMainForm静态成员初化
-std::vector<std::string> ToDoListMainForm::m_vecdata;
-std::vector<CListTextElementUI*> m_pelementvec;
-//ToDoListMainForm成员函数
-ToDoListMainForm::ToDoListMainForm() = default;
+//静态成员初化
+std::map<unsigned, std::string> ToDoListMainForm::m_mapdata;
+unsigned ToDoListMainForm::index=0;
 
+//成员函数定义
+ToDoListMainForm::ToDoListMainForm() = default;
 inline LPCTSTR ToDoListMainForm::GetWindowClassName() const
 {
 	return _T("ToDoListMainForm");
@@ -38,12 +39,22 @@ DWORD __stdcall ToDoListMainForm::Create_item(LPVOID lpParameter)
 		Prama* prama = static_cast<Prama*>(lpParameter);
 		CListUI* pList = prama->pList;
 		CButtonUI* pCreate = prama->pCreate;
-		m_vecdata.push_back(string(prama->tstext));
 		CListTextElementUI* pListElement = new CListTextElementUI;
 		pListElement->ApplyAttributeList(_T("height=\"45\""));
-		m_pelementvec.push_back(pListElement);
 		//pListElement->SetText(0, prama->tstext);
-		//pListElement->SetTag(i);
+		for (; index < static_cast<unsigned>(-1);)
+		{
+			if (m_mapdata.count(index) == 0)
+			{
+				m_mapdata[index] = prama->tstext;
+				pListElement->SetTag(index++);
+				break;
+			}
+			else
+			{
+				++index;
+			}
+		}
 		if (pListElement != NULL)
 		{
 			::PostMessage(prama->hWnd, WM_ADDLISTITEM, 0L, (LPARAM)pListElement);
@@ -82,18 +93,17 @@ LPCTSTR ToDoListMainForm::GetItemText(CControlUI* pControl, int iIndex, int iSub
 		_stprintf_s(arr, "%d", iIndex);
 		break;
 	case 1:
-		if (m_vecdata.size() >= MAX_PATH-2)
+		if (m_mapdata[iIndex].size() >= MAX_PATH-2)
 		{
-			strcat_s(arr, m_vecdata[iIndex].substr(0, MAX_PATH-2).c_str());
+			strcat_s(arr, m_mapdata[iIndex].substr(0, MAX_PATH-2).c_str());
 		}
 		else
 		{
-			strcat_s(arr, m_vecdata[iIndex].c_str());
+			strcat_s(arr, m_mapdata[iIndex].c_str());
 		}
 		break;
 	}
 	pControl->SetUserData(arr);
-	//pControl->SetTag(iIndex);
 	return pControl->GetUserData();
 }
 void ToDoListMainForm::Notify(TNotifyUI & msg)
@@ -119,44 +129,35 @@ void ToDoListMainForm::Notify(TNotifyUI & msg)
 	}
 	else if (msg.sType == _T("itemactivate"))
 	{
-		CListUI* pList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("todolist")));
+		//双击响应删除(bug)
+		/*CListUI* pList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("todolist")));
+		string Message = "已完成任务:";
 		if (pList->GetItemIndex(msg.pSender) != -1)
 		{
 			if (_tcscmp(msg.pSender->GetClass(), _T("ListTextElementUI")) == 0) 
 			{
-				int i=pList->GetCurSel();
+				int i = pList->GetCurSel();
 				CControlUI*  element=pList->GetItemAt(i);
-				int j=pList->GetCount();
-				pList->RemoveAll();
-				//pList->Remove(element);
-				/*if(i<m_pelementvec.size())
-				{ 
-					CListTextElementUI* pdel=m_pelementvec[i];
-					std::remove(m_pelementvec.begin(), m_pelementvec.end(), pdel);
-					pList->Remove(pdel);
-					pList->SetTextCallback(this);
-				}*/
-		
+				unsigned tag = element->GetTag();
+				Message+=m_mapdata[tag];
+				m_mapdata.erase(tag);
+				pList->Remove(element);
+				pList->SetTextCallback(this);
+			}
+		}*/
+
+		string Message = "任务信息:";
+		CListUI* pList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("todolist")));
+		if (pList->GetItemIndex(msg.pSender) != -1)
+		{
+			if (_tcscmp(msg.pSender->GetClass(), _T("ListTextElementUI")) == 0)
+			{
+				int i = pList->GetCurSel();
+				CControlUI* element = pList->GetItemAt(i);
+				unsigned tag = element->GetTag();
+				Message+=m_mapdata[tag];
 			}
 		}
-		string Message = "已完成:";
-		Message += m_vecdata[0];
-		/*CListTextElementUI* pListElement = static_cast<CListTextElementUI*>(m_PaintManager.FindControl(_T("todolist")));*/
-		//CDuiString pListElement->GetText();
-		//int iIndex = msg.pSender->GetTag();
-		
-		//CDuiString sMessage = _T("已完成: ");;
-//#ifdef _UNICODE		
-//		int iLen = m_vecdata[iIndex].length();
-//		LPWSTR lpText = new WCHAR[iLen + 1];
-//		::ZeroMemory(lpText, (iLen + 1) * sizeof(WCHAR));
-//		::MultiByteToWideChar(CP_ACP, 0, m_vecdata[iIndex].c_str(), -1, (LPWSTR)lpText, iLen);
-//		sMessage += lpText;
-//		delete[] lpText;
-//#else
-//		sMessage += m_vecdata[iIndex].c_str();
-
-//#endif
 		::MessageBox(NULL, Message.c_str(), _T("提示"), MB_OK);
 	}
 }
@@ -189,7 +190,7 @@ LRESULT ToDoListMainForm::OnAddListItem(UINT uMsg, WPARAM wParam, LPARAM lParam,
 {
 	CListTextElementUI* pListElement =(CListTextElementUI*)lParam;
 	CListUI* pList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("todolist")));
-	if (pList) pList->Add(pListElement);
+	if (pList)  pList->Add(pListElement);
 
 	return 0;
 }
@@ -202,7 +203,7 @@ LRESULT ToDoListMainForm::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 	m_PaintManager.Init(m_hWnd);
 	m_PaintManager.SetTransparent(260);
 	CDialogBuilder builder;
-	CControlUI * pRoot = builder.Create(_T("text154.xml"), (UINT)0, NULL, &m_PaintManager);
+	CControlUI * pRoot = builder.Create(_T("skin.xml"), (UINT)0, NULL, &m_PaintManager);
 	ASSERT(pRoot && "Failed to parse XML");
 	m_PaintManager.AttachDialog(pRoot);
 	m_PaintManager.AddNotifier(this);
