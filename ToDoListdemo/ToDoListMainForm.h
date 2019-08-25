@@ -1,6 +1,6 @@
 #pragma once
 #include "DuilibAfx.h"
-#include <map>
+#include <vector>
 #include <string>
 
 struct Prama
@@ -26,6 +26,7 @@ public:
 	LPCTSTR GetItemText(CControlUI* pControl, int iIndex, int iSubItem);
 	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnAddListItem(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+	LRESULT OnRemoveListItem(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -45,7 +46,7 @@ private:
 	CButtonUI* m_pCloseBtn;
 	CButtonUI* m_pCreateBtn;
 	CEditUI* m_pEdit;
-	static unsigned index;
-	static std::map<unsigned,std::string> m_mapdata;
+
+	static std::vector<std::string> m_vecstring;
 };
 

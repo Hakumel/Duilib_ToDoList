@@ -47,6 +47,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\Administrator\Desktop\duilib文档\Diulib项\Duilib-demo\DuiLib;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Administrator\Desktop\duilib文档\Diulib项\Duilib-demo\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

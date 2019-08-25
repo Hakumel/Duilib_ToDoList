@@ -1,12 +1,10 @@
 #include "TodoListMainForm.h"
-#include <memory>
 #include <algorithm>
 
 const int WM_ADDLISTITEM = WM_USER + 66;
 
 //静态成员初化
-std::map<unsigned, std::string> ToDoListMainForm::m_mapdata;
-unsigned ToDoListMainForm::index=0;
+std::vector<std::string> ToDoListMainForm::m_vecstring;
 
 //成员函数定义
 ToDoListMainForm::ToDoListMainForm() = default;
@@ -41,20 +39,7 @@ DWORD __stdcall ToDoListMainForm::Create_item(LPVOID lpParameter)
 		CButtonUI* pCreate = prama->pCreate;
 		CListTextElementUI* pListElement = new CListTextElementUI;
 		pListElement->ApplyAttributeList(_T("height=\"45\""));
-		//pListElement->SetText(0, prama->tstext);
-		for (; index < static_cast<unsigned>(-1);)
-		{
-			if (m_mapdata.count(index) == 0)
-			{
-				m_mapdata[index] = prama->tstext;
-				pListElement->SetTag(index++);
-				break;
-			}
-			else
-			{
-				++index;
-			}
-		}
+		m_vecstring.push_back(string(prama->tstext));
 		if (pListElement != NULL)
 		{
 			::PostMessage(prama->hWnd, WM_ADDLISTITEM, 0L, (LPARAM)pListElement);
@@ -93,13 +78,13 @@ LPCTSTR ToDoListMainForm::GetItemText(CControlUI* pControl, int iIndex, int iSub
 		_stprintf_s(arr, "%d", iIndex);
 		break;
 	case 1:
-		if (m_mapdata[iIndex].size() >= MAX_PATH-2)
+		if (m_vecstring[iIndex].size() >= MAX_PATH-2)
 		{
-			strcat_s(arr, m_mapdata[iIndex].substr(0, MAX_PATH-2).c_str());
+			strcat_s(arr, m_vecstring[iIndex].substr(0, MAX_PATH-2).c_str());
 		}
 		else
 		{
-			strcat_s(arr, m_mapdata[iIndex].c_str());
+			strcat_s(arr, m_vecstring[iIndex].c_str());
 		}
 		break;
 	}
@@ -129,23 +114,26 @@ void ToDoListMainForm::Notify(TNotifyUI & msg)
 	}
 	else if (msg.sType == _T("itemactivate"))
 	{
+		
 		//双击响应删除(bug)
-		CListUI* pList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("todolist")));
+
+		/*CListUI* pList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("todolist")));
 		string Message = "已完成任务:";
 		if (pList->GetItemIndex(msg.pSender) != -1)
 		{
-			if (_tcscmp(msg.pSender->GetClass(), _T("ListTextElementUI")) == 0) 
+			if (_tcscmp(msg.pSender->GetClass(), _T("ListTextElementUI")) == 0)
 			{
 				int i = pList->GetCurSel();
-				CControlUI*  element=pList->GetItemAt(i);
-				unsigned tag = element->GetTag();
-				Message+=m_mapdata[tag];
-				m_mapdata.erase(tag);
-				pList->Remove(element);
+				CControlUI* pListElement = pList->GetItemAt(i);
+				int row = pList->GetCurSel();
+				Message += m_vecstring[row];
+				pList->RemoveAt(row);
+				m_vecstring.erase(m_vecstring.begin()+ row);
 				pList->SetTextCallback(this);
 			}
-		}
-/*
+		}*/
+		
+		
 		string Message = "任务信息:";
 		CListUI* pList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("todolist")));
 		if (pList->GetItemIndex(msg.pSender) != -1)
@@ -153,12 +141,9 @@ void ToDoListMainForm::Notify(TNotifyUI & msg)
 			if (_tcscmp(msg.pSender->GetClass(), _T("ListTextElementUI")) == 0)
 			{
 				int i = pList->GetCurSel();
-				CControlUI* element = pList->GetItemAt(i);
-				unsigned tag = element->GetTag();
-				Message+=m_mapdata[tag];
+				Message+=m_vecstring[i];
 			}
-		}*/
-		
+		}
 		::MessageBox(NULL, Message.c_str(), _T("提示"), MB_OK);
 	}
 }
@@ -195,6 +180,7 @@ LRESULT ToDoListMainForm::OnAddListItem(UINT uMsg, WPARAM wParam, LPARAM lParam,
 
 	return 0;
 }
+
 
 LRESULT ToDoListMainForm::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
 {
